@@ -30,21 +30,10 @@ dht DHT;
 // Value for storing water level
 int val = 0;
 
-//for fan (may need to delete)
-int speedPin =53 ; 
-int dir1 = 51; 
-int dir2 =49;
-int mSpeed = 90;
-
-
 //FOR PORT H INPUT / OUTPUT
 volatile unsigned char* port_h = (unsigned char*) 0x102; 
 volatile unsigned char* ddr_h = (unsigned char*) 0x101;
 volatile unsigned char* pin_h = (unsigned char*) 0x100;
-
-volatile unsigned char* port_l = (unsigned char*) 0x10B;
-volatile unsigned char* ddr_l = (unsigned char*) 0x10A;
-volatile unsigned char* pin_l = (unsigned char*) 0x109;
 
 volatile unsigned char* myTCCR1A = (unsigned char*) 0x80;
 volatile unsigned char* myTCCR1B = (unsigned char*) 0x81;
@@ -59,7 +48,7 @@ volatile unsigned char* my_ADCSRA = (unsigned char*) 0x7A;
 volatile unsigned int* my_ADC_DATA = (unsigned int*) 0x78;
 
 void setup() {
-  	// for water sensor 
+  // for water sensor 
     // Set D7 as an OUTPUT
     *ddr_h |= 0b100100010001;
     // pinMode(sensorPower, OUTPUT);
@@ -68,14 +57,6 @@ void setup() {
     // Set to LOW so no power flows through the sensor
     //digitalWrite(sensorPower, LOW);
     write_ph(4, 0);
-
-	//for Fan motor 
-  	//pinMode(speedPin, OUTPUT);
-  	*ddr_b |= 0x01 << 0;
- 	// pinMode(dir1,OUTPUT);
-  	*ddr_b |= 0x01 << 2;
-  	//pinMode(dir2,OUTPUT);
-  	*ddr_l |= 0x01 << 0;
 
     adc_init();
     Serial.begin(9600);
@@ -107,21 +88,6 @@ void loop() {
   	lcd.print("%");
   	delay(1000);
 
-
-  	// put your main code here, to run repeatedly:
-  	//digitalWrite(dir1,LOW);
-  	write_pb(2, 0);
-  	//digitalWrite(dir2,HIGH);
-  	write_pl(0,1);
-
- 	// digitalWrite(speedPin, HIGH);
-  	write_pb(0, 1);
-  	//analogWrite(speedPin, 255);
-  	delay (5000);
-  	//analogWrite (speedPin, mSpeed);
-  	//digitalWrite (speedPin, LOW);
-  	write_pb (0, 0);
-  	delay (5000);
 
 
     delay(1000);
@@ -225,16 +191,3 @@ void adc_init()
   *my_ADMUX  &= 0b11011111; // clear bit 5 to 0 for right adjust result
   *my_ADMUX  &= 0b11100000; // clear bit 4-0 to 0 to reset the channel and gain bits
 }
-
-void write_pl(unsigned char pin_num, unsigned char state)
-{
-  if(state == 0)
-  {
-    *port_l &= ~(0x01 << pin_num); //LOW
-  }
-  else
-  {
-    *port_l |= 0x01 << pin_num; //HIGH
-  }
-}
-
