@@ -5,6 +5,14 @@
 #include <dht.h>//for humidity & temp sensor
 #include <LiquidCrystal.h> //for LCD screen 
 
+
+//Includes the Arduino Stepper Library
+#include <Stepper.h>
+// Defines the number of steps per rotation
+const int stepsPerRevolution = 2038;
+// Creates an instance of stepper class
+// Pins entered in sequence IN1-IN3-IN2-IN4 for proper step sequence
+Stepper myStepper = Stepper(stepsPerRevolution, 29, 27, 25, 23);
 /*
 The circuit for LCD:
  * LCD RS pin to digital pin 12
@@ -36,6 +44,13 @@ int dir1 = 51;
 int dir2 =49;
 int mSpeed = 90;
 
+////FOR PORT B INPUT / OUTPUT
+volatile unsigned char* port_b = (unsigned char*) 0x25;
+volatile unsigned char* ddr_b = (unsigned char*) 0x24;
+volatile unsigned char* pin_b = (unsigned char*) 0x23;
+
+
+
 
 //FOR PORT H INPUT / OUTPUT
 volatile unsigned char* port_h = (unsigned char*) 0x102; 
@@ -58,6 +73,8 @@ volatile unsigned char* my_ADCSRB = (unsigned char*) 0x7B;
 volatile unsigned char* my_ADCSRA = (unsigned char*) 0x7A;
 volatile unsigned int* my_ADC_DATA = (unsigned int*) 0x78;
 
+bool isFanOn; 
+
 void setup() {
   	// for water sensor 
     // Set D7 as an OUTPUT
@@ -70,12 +87,34 @@ void setup() {
     write_ph(4, 0);
 
 	//for Fan motor 
+  isFanOn = false;  
   	//pinMode(speedPin, OUTPUT);
   	*ddr_b |= 0x01 << 0;
  	// pinMode(dir1,OUTPUT);
   	*ddr_b |= 0x01 << 2;
   	//pinMode(dir2,OUTPUT);
   	*ddr_l |= 0x01 << 0;
+
+  //FOR STEPPER MOTOR 
+  Serial.begin (9600);
+  pinMode(43, INPUT);
+  pinMode(41, INPUT);
+  pinMode(39, INPUT);
+  pinMode(35, OUTPUT);
+
+  //LED PINS
+  //22 -> BLue LED
+  //24-> Yellow LED 
+  //30 -> Green LED
+  //28 -> RED LED 
+  pinMode (22, OUTPUT);
+  pinMode (24, OUTPUT);
+  pinMode (30, OUTPUT);
+  pinMode (28, OUTPUT);
+
+
+
+// Nothing to do (Stepper Library sets pins as outputs)
 
     adc_init();
     Serial.begin(9600);
@@ -108,6 +147,54 @@ void loop() {
   	delay(1000);
 
 
+//FAN STUFF
+    if(DHT.temperature *9/5 + 32 >= 74){// fan is on
+
+      //BLUE ON, REST OFF 
+      digitalWrite(22, HIGH);
+      digitalWrite(24, LOW);
+      digitalWrite(30, LOW);
+      digitalWrite(28, LOW);
+
+
+
+      
+
+      // put your main code here, to run repeatedly:
+      //digitalWrite(dir1,LOW);
+      write_pb(2, 0);
+      //digitalWrite(dir2,HIGH);
+      write_pl(0,1);
+
+     // digitalWrite(speedPin, HIGH);
+      write_pb(0, 1);
+      //analogWrite(speedPin, 255);
+
+      //analogWrite (speedPin, mSpeed);
+      //digitalWrite (speedPin, LOW);
+
+
+
+    delay(1000);
+    }
+    else{//FAN OFF 
+
+      //GREEN LED ON, YELLOW ON, REST OFF
+      digitalWrite(24, HIGH);
+      digitalWrite (26, HIGH);//red
+      digitalWrite (22, LOW);
+      
+
+      write_pb(0, 0);
+
+    }
+
+    if (isFanOn == 0 && level < 150)
+    {
+        digitalWrite (26, HIGH);
+    }
+
+/*
   	// put your main code here, to run repeatedly:
   	//digitalWrite(dir1,LOW);
   	write_pb(2, 0);
@@ -123,9 +210,15 @@ void loop() {
   	write_pb (0, 0);
   	delay (5000);
 
+*/
 
+//Stepper motor stuff 
+
+  stepperDirection();
     delay(1000);
 }
+
+
 
 //This is a function used to get the reading
 int readSensor() {
@@ -237,4 +330,62 @@ void write_pl(unsigned char pin_num, unsigned char state)
     *port_l |= 0x01 << pin_num; //HIGH
   }
 }
+
+void write_pb(unsigned char pin_num, unsigned char state)
+{
+  if(state == 0)
+  {
+    *port_b &= ~(0x01 << pin_num); //LOW
+  }
+  else
+  {
+    *port_b |= 0x01 << pin_num; //HIGH
+  }
+}
+
+
+void stepperDirection()
+{
+
+int buttonLeft = NULL;
+int buttonRight = NULL;
+int buttonMiddle = NULL;
+
+buttonLeft = digitalRead(43);
+buttonRight = digitalRead(39);
+buttonMiddle = digitalRead(41);
+
+
+if (buttonLeft == HIGH )
+  {
+    Serial.println("Turning left...");
+    //turn left 
+    myStepper.setSpeed(10);
+    myStepper.step(-stepsPerRevolution);
+  }
+
+
+if (buttonRight == HIGH)
+  {
+    Serial.println("Turning right...");
+    myStepper.setSpeed(10);
+    myStepper.step(stepsPerRevolution);
+  }
+ 
+if(buttonMiddle == HIGH)
+  {
+    digitalWrite(35, LOW);
+  }
+
+
+}
+
+void leds()
+{
+  //22 -> BLue LED
+  //23-> Yellow LED 
+  //24 -> Green LED
+
+}
+
 
