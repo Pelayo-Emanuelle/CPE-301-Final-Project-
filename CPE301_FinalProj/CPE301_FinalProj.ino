@@ -44,124 +44,6 @@ int dir1 = 51;
 int dir2 =49;
 int mSpeed = 90;
 
-<<<<<<< HEAD
-////FOR PORT A INPUT / OUTPUT
-volatile unsigned char* port_a = (unsigned char*) 0x22;
-volatile unsigned char* ddr_a = (unsigned char*) 0x21;
-volatile unsigned char* pin_a = (unsigned char*) 0x20;
-
-=======
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
-////FOR PORT B INPUT / OUTPUT
-volatile unsigned char* port_b = (unsigned char*) 0x25;
-volatile unsigned char* ddr_b = (unsigned char*) 0x24;
-volatile unsigned char* pin_b = (unsigned char*) 0x23;
-<<<<<<< HEAD
-////FOR PORT C INPUT / OUTPUT
-volatile unsigned char* port_c = (unsigned char*) 0x28;
-volatile unsigned char* ddr_c = (unsigned char*) 0x27;
-volatile unsigned char* pin_c = (unsigned char*) 0x26;
-////FOR PORT G INPUT / OUTPUT
-volatile unsigned char* port_g = (unsigned char*) 0x34;
-volatile unsigned char* ddr_g = (unsigned char*) 0x33;
-volatile unsigned char* pin_g = (unsigned char*) 0x32;
-=======
-
-
-
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
-
-//FOR PORT H INPUT / OUTPUT
-volatile unsigned char* port_h = (unsigned char*) 0x102; 
-volatile unsigned char* ddr_h = (unsigned char*) 0x101;
-volatile unsigned char* pin_h = (unsigned char*) 0x100;
-
-<<<<<<< HEAD
-////FOR PORT L INPUT / OUTPUT
-=======
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
-volatile unsigned char* port_l = (unsigned char*) 0x10B;
-volatile unsigned char* ddr_l = (unsigned char*) 0x10A;
-volatile unsigned char* pin_l = (unsigned char*) 0x109;
-
-volatile unsigned char* myTCCR1A = (unsigned char*) 0x80;
-volatile unsigned char* myTCCR1B = (unsigned char*) 0x81;
-volatile unsigned char* myTCCR1C = (unsigned char*) 0x82;
-volatile unsigned char* myTIMSK1 = (unsigned char*) 0x6F;
-volatile unsigned int* myTCNT1  = (unsigned  int*) 0x84;
-volatile unsigned char* myTIFR1 =  (unsigned char*) 0x36;
-
-volatile unsigned char* my_ADMUX = (unsigned char*) 0x7C;
-volatile unsigned char* my_ADCSRB = (unsigned char*) 0x7B;
-volatile unsigned char* my_ADCSRA = (unsigned char*) 0x7A;
-volatile unsigned int* my_ADC_DATA = (unsigned int*) 0x78;
-
-bool isFanOn; 
-
-void setup() {
-<<<<<<< HEAD
-    Serial.begin(9600);
-  	// for water sensor 
-    // Set D7 as an OUTPUT
-    *ddr_h |= 0b100100010001;
-    // pinMode(sensorPower, OUTPUT);
-	lcd.begin(16, 2); //setup LCD Display
-
-    // Set to LOW so no power flows through the sensor
-    //digitalWrite(sensorPower, LOW);
-    write_ph(4, 0);
-
-... (413 lines left)
-Collapse
-message.txt
-12 KB
-﻿
-// Sensor pins
-#define sensorPower 7
-#define sensorPin A0
-
-#include <dht.h>//for humidity & temp sensor
-#include <LiquidCrystal.h> //for LCD screen 
-
-
-//Includes the Arduino Stepper Library
-#include <Stepper.h>
-// Defines the number of steps per rotation
-const int stepsPerRevolution = 2038;
-// Creates an instance of stepper class
-// Pins entered in sequence IN1-IN3-IN2-IN4 for proper step sequence
-Stepper myStepper = Stepper(stepsPerRevolution, 29, 27, 25, 23);
-/*
-The circuit for LCD:
- * LCD RS pin to digital pin 12
- * LCD Enable pin to digital pin 11
- * LCD D4 pin to digital pin 5
- * LCD D5 pin to digital pin 4
- * LCD D6 pin to digital pin 3
- * LCD D7 pin to digital pin 2
- * LCD R/W pin to ground
- * LCD VSS pin to ground
- * LCD VCC pin to 5V
- * 10K resistor:
- * ends to +5V and ground
- * wiper to LCD VO pin (pin 3)
- */
-
-
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
-dht DHT;
-#define DHT11_PIN 6
-
-// Value for storing water level
-int val = 0;
-
-//for fan (may need to delete)
-int speedPin =53 ; 
-int dir1 = 51; 
-int dir2 =49;
-int mSpeed = 90;
-
 ////FOR PORT A INPUT / OUTPUT
 volatile unsigned char* port_a = (unsigned char*) 0x22;
 volatile unsigned char* ddr_a = (unsigned char*) 0x21;
@@ -206,8 +88,6 @@ bool isFanOn;
 
 void setup() {
     Serial.begin(9600);
-=======
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
   	// for water sensor 
     // Set D7 as an OUTPUT
     *ddr_h |= 0b100100010001;
@@ -220,7 +100,6 @@ void setup() {
 
 	//for Fan motor 
   isFanOn = false;  
-<<<<<<< HEAD
   	//pinMode(53, OUTPUT);
   	*ddr_b |= 0x01 << 0;
  	// pinMode(51,OUTPUT);
@@ -238,28 +117,12 @@ void setup() {
   //pinMode(35, OUTPUT);
     *ddr_c |= 0x01 << 2;
   
-=======
-  	//pinMode(speedPin, OUTPUT);
-  	*ddr_b |= 0x01 << 0;
- 	// pinMode(dir1,OUTPUT);
-  	*ddr_b |= 0x01 << 2;
-  	//pinMode(dir2,OUTPUT);
-  	*ddr_l |= 0x01 << 0;
-
-  //FOR STEPPER MOTOR 
-  Serial.begin (9600);
-  pinMode(43, INPUT);
-  pinMode(41, INPUT);
-  pinMode(39, INPUT);
-  pinMode(35, OUTPUT);
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
 
   //LED PINS
   //22 -> BLue LED
   //24-> Yellow LED 
   //30 -> Green LED
   //28 -> RED LED 
-<<<<<<< HEAD
   
   //pinMode (22, OUTPUT);
   *ddr_a |= 0x01 << 0;
@@ -272,22 +135,12 @@ void setup() {
 
   //pinMode (28, OUTPUT);
   *ddr_c |= 0x01 << 7;
-=======
-  pinMode (22, OUTPUT);
-  pinMode (24, OUTPUT);
-  pinMode (30, OUTPUT);
-  pinMode (28, OUTPUT);
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
 
 
 
 // Nothing to do (Stepper Library sets pins as outputs)
 
     adc_init();
-<<<<<<< HEAD
-=======
-    Serial.begin(9600);
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
 }
 
 void loop() {
@@ -300,7 +153,6 @@ void loop() {
       Serial.println("Water level is too low");
     }
 
-<<<<<<< HEAD
 
 
 
@@ -327,8 +179,6 @@ void loop() {
   delay(1000);
 
 /*
-=======
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
 	//Display Temp and humidity on LCD 
 	int checker = DHT.read11(DHT11_PIN);
   	lcd.setCursor(0,0); 
@@ -345,7 +195,6 @@ void loop() {
   	lcd.print("%");
   	delay(1000);
 
-<<<<<<< HEAD
 */
 //FAN STUFF
     if(DHT.temperature *9/5 + 32 >= 70){// fan is on
@@ -366,17 +215,6 @@ void loop() {
       
       //digitalWrite(28, LOW);
       write_pA(6,0);
-=======
-
-//FAN STUFF
-    if(DHT.temperature *9/5 + 32 >= 74){// fan is on
-
-      //BLUE ON, REST OFF 
-      digitalWrite(22, HIGH);
-      digitalWrite(24, LOW);
-      digitalWrite(30, LOW);
-      digitalWrite(28, LOW);
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
 
 
 
@@ -397,16 +235,11 @@ void loop() {
 
 
 
-<<<<<<< HEAD
     //delay(1000);
-=======
-    delay(1000);
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
     }
     else{//FAN OFF 
 
       //GREEN LED ON, YELLOW ON, REST OFF
-<<<<<<< HEAD
       //digitalWrite(30, HIGH);
       write_pC(7,1);
 
@@ -416,18 +249,12 @@ void loop() {
       //digitalWrite (22, LOW);
       write_pA(0, 0);
 
-=======
-      digitalWrite(24, HIGH);
-      digitalWrite (26, HIGH);//red
-      digitalWrite (22, LOW);
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
       
 
       write_pb(0, 0);
 
     }
 
-<<<<<<< HEAD
     if (isFanOn == 0 && level < 150) //ERROR STATE 
     {
       //RED LED ON, REST OFF 
@@ -442,11 +269,6 @@ void loop() {
        // digitalWrite (30, LOW);
         write_pC(7,0);
 
-=======
-    if (isFanOn == 0 && level < 150)
-    {
-        digitalWrite (26, HIGH);
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
     }
 
 /*
@@ -455,10 +277,6 @@ void loop() {
   	write_pb(2, 0);
   	//digitalWrite(dir2,HIGH);
   	write_pl(0,1);
-<<<<<<< HEAD
-=======
-
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
  	// digitalWrite(speedPin, HIGH);
   	write_pb(0, 1);
   	//analogWrite(speedPin, 255);
@@ -467,10 +285,6 @@ void loop() {
   	//digitalWrite (speedPin, LOW);
   	write_pb (0, 0);
   	delay (5000);
-<<<<<<< HEAD
-=======
-
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
 */
 
 //Stepper motor stuff 
@@ -604,7 +418,6 @@ void write_pb(unsigned char pin_num, unsigned char state)
   }
 }
 
-<<<<<<< HEAD
 void write_pA(unsigned char pin_num, unsigned char state)
 {
   if(state == 0)
@@ -642,8 +455,6 @@ void write_pg(unsigned char pin_num, unsigned char state)
 }
 
 
-=======
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
 
 void stepperDirection()
 {
@@ -656,13 +467,8 @@ buttonLeft = digitalRead(43);
 buttonRight = digitalRead(39);
 buttonMiddle = digitalRead(41);
 
-<<<<<<< HEAD
 //if pin 43 is high
 if (*pin_l & 0b01000000)//buttonLeft == HIGH )//*pin_l & 0b01000000 )//buttonLeft == HIGH )
-=======
-
-if (buttonLeft == HIGH )
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
   {
     Serial.println("Turning left...");
     //turn left 
@@ -670,24 +476,18 @@ if (buttonLeft == HIGH )
     myStepper.step(-stepsPerRevolution);
   }
 
-<<<<<<< HEAD
 // if pin 39 is high
 if (*pin_g & 0b00000100)
   {
    //do absolutely nothing
   }
   else //if pin 39 is low 
-=======
-
-if (buttonRight == HIGH)
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
   {
     Serial.println("Turning right...");
     myStepper.setSpeed(10);
     myStepper.step(stepsPerRevolution);
   }
  
-<<<<<<< HEAD
  // if pin 41 is high
  if(*pin_g & 0b00000001)
   {
@@ -699,11 +499,6 @@ if (buttonRight == HIGH)
     //digitalWrite(53, LOW);//turn off the fan 
     write_pb(0, 0);//turn off the fan 
     isFanOn = false; 
-=======
-if(buttonMiddle == HIGH)
-  {
-    digitalWrite(35, LOW);
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
   }
 
 
@@ -716,8 +511,3 @@ void leds()
   //24 -> Green LED
 
 }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 9890d3187a191329033df03e3223ec1aeba5b254
