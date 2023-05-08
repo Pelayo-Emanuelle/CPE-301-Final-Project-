@@ -30,7 +30,7 @@ The circuit for LCD:
  */
 
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
 dht DHT;
 #define DHT11_PIN 6
@@ -159,26 +159,10 @@ void loop() {
 
 
   int chk = DHT.read11(DHT11_PIN);
-  Serial.print(DHT.temperature);
-  Serial.print((char)223);
-  Serial.print("C");
+ 
 
-  Serial.print("Humidity: ");
-  Serial.print(DHT.humidity);
-  Serial.print("%");
 
-  lcd.setCursor(0,0); 
-  lcd.print("Temp: ");
-  lcd.print(DHT.temperature);
-  lcd.print((char)223);
-  lcd.print("C");
-  lcd.setCursor(0,1);
-  lcd.print("Humidity: ");
-  lcd.print(DHT.humidity);
-  lcd.print("%");
-  delay(1000);
 
-/*
 	//Display Temp and humidity on LCD 
 	int checker = DHT.read11(DHT11_PIN);
   	lcd.setCursor(0,0); 
@@ -195,7 +179,7 @@ void loop() {
   	lcd.print("%");
   	delay(1000);
 
-*/
+
 //FAN STUFF
     if(DHT.temperature *9/5 + 32 >= 70){// fan is on
     //70 for testing if fan on, set to 74 if testing for fan off
@@ -259,6 +243,10 @@ void loop() {
     {
       //RED LED ON, REST OFF 
         //digitalWrite (28, HIGH);//red
+	    
+	  lcd.setCursor(0,0); 
+ 	   lcd.print("Water level low");
+	    
         write_pA(6,1);
 
        // digitalWrite (24, LOW);
