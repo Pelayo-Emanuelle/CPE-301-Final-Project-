@@ -83,20 +83,11 @@ volatile unsigned int* my_ADC_DATA = (unsigned int*) 0x78;
 bool isFanOn; //boolean to check if fan is on 
 
 void setup() {
-
-
-  Serial.begin(9600);
-
-  rtc.begin(); // initialize rtc module
-  // Set the current time and date (format: year, month, day, hour, minute, second)
-
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // Set the RTC time to the current compile time
-
-  // for water sensor 
-  // Set D7 as an OUTPUT
-  *ddr_h |= 0b100100010001; // pinMode(sensorPower, OUTPUT);
-
-  // pinMode(sensorPower, OUTPUT);
+    Serial.begin(9600);
+  	// for water sensor 
+    // Set D7 as an OUTPUT
+    *ddr_h |= 0b100100010001;
+    // pinMode(sensorPower, OUTPUT);
 	lcd.begin(16, 2); //setup LCD Display
 
   // Set to LOW so no power flows through the sensor
@@ -105,27 +96,22 @@ void setup() {
 
 	//for Fan motor 
   isFanOn = false;  
-  //pinMode(53, OUTPUT);
-  *ddr_b |= 0x01 << 0;
-
+  	//pinMode(53, OUTPUT);
+  	*ddr_b |= 0x01 << 0;
  	// pinMode(51,OUTPUT);
-  *ddr_b |= 0x01 << 2;
-
-  //pinMode(49,OUTPUT);
-  *ddr_l |= 0x01 << 0;
+  	*ddr_b |= 0x01 << 2;
+  	//pinMode(49,OUTPUT);
+  	*ddr_l |= 0x01 << 0;
 
   //FOR STEPPER MOTOR 
   //pinMode(43, INPUT);
     *ddr_l &= 0x0 << 6;
-
   //pinMode(41, INPUT);
-  *ddr_g &= 0x0 << 0;
-
+    *ddr_g &= 0x0 << 0;
   //pinMode(39, INPUT);
-  *ddr_g &= 0x0 << 2;
-
+    *ddr_g &= 0x0 << 2;
   //pinMode(35, OUTPUT);
-  *ddr_c |= 0x01 << 2;
+    *ddr_c |= 0x01 << 2;
   
 
   //LED PINS
@@ -147,10 +133,10 @@ void setup() {
   *ddr_c |= 0x01 << 7;
 
 
+
 // Nothing to do (Stepper Library sets pins as outputs)
 
-  adc_init();
-
+    adc_init();
 }
 
 void loop() {
@@ -165,8 +151,15 @@ void loop() {
     Serial.println("Water level is too low");
   }
 
+
+
+
+
+
   int chk = DHT.read11(DHT11_PIN);
-  
+ 
+
+
 
 	//Display Temp and humidity on LCD 
 	int checker = DHT.read11(DHT11_PIN);
@@ -200,19 +193,27 @@ void loop() {
   my_delay(1000);
 
 
-//FAN STUFF //70-> BLUE , 76 -> Green
-  if((DHT.temperature *9/5 + 32 >= 70) && level > 150)
-  {// fan is on
-  lcd.display();
-
-    //BLUE ON, REST OFF 
-    isFanOn = true; 
-    //digitalWrite(22, HIGH);
-    write_pA(0,1);
+//FAN STUFF
+    if(DHT.temperature *9/5 + 32 >= 70){// fan is on
+    //70 for testing if fan on, set to 74 if testing for fan off
+      //BLUE ON, REST OFF 
+      isFanOn = true; 
+      //digitalWrite(22, HIGH);
+      write_pA(0,1);
 
       
-    //digitalWrite(24, LOW);
-    write_pA(2,0);
+      //digitalWrite(24, LOW);
+      write_pA(2,0);
+
+      
+     // digitalWrite(30, LOW);
+      write_pC(7,0);
+
+      
+      //digitalWrite(28, LOW);
+      write_pA(6,0);
+
+
 
       
     // digitalWrite(30, LOW);
@@ -234,24 +235,22 @@ void loop() {
 
   }
 
-    
-    
-    else 
-    {//FAN OFF 
 
-      isFanOn = false; 
-      lcd.display();
+
+    //delay(1000);
+    }
+    else{//FAN OFF 
 
       //GREEN LED ON, YELLOW ON, REST OFF
-      if (*pin_a & 0b01000000)
-      {
-        write_pA(6,0);
-      }
-      else
-      {
-        write_pC(7,1);
-        write_pA(2,0);
-      }
+      //digitalWrite(30, HIGH);
+      write_pC(7,1);
+
+      //digitalWrite (24, HIGH);//red
+      write_pA(2, 1);
+
+      //digitalWrite (22, LOW);
+      write_pA(0, 0);
+
       
       //digitalWrite (22, LOW);
       write_pA(0, 0);
@@ -263,40 +262,41 @@ void loop() {
 
     }
 
-    while (level < 150 && isFanOn == false) //ERROR STATE 
+    if (isFanOn == 0 && level < 150) //ERROR STATE 
     {
-      lcd.display();
-      level = readSensor();
-
-      //Change to 74 if testing for temp lower than room temp
-      if (DHT.temperature *9/5 + 32 <= 70)
-      {
-        write_pC(7,1);
-      }
-
-
-
-      //DISPLAY WATER LOW BRUH
-      lcd.setCursor(0,0); 
- 	    lcd.print("WATER LEVEL LOW ");
-
-      lcd.setCursor(0,1);
-      lcd.print("                     ");
-
-
       //RED LED ON, REST OFF 
-      //digitalWrite (28, HIGH);//red
-      write_pA(6,1);
+        //digitalWrite (28, HIGH);//red
+	    
+	  lcd.setCursor(0,0); 
+ 	   lcd.print("Water level low");
+	    
+        write_pA(6,1);
 
-      // digitalWrite (24, LOW);
-      write_pA(2, 0);
+       // digitalWrite (24, LOW);
+         write_pA(2, 0);
 
-      //digitalWrite (22, LOW);
-      write_pA(0, 0);
-      // digitalWrite (30, LOW);
-      write_pC(7,0);
+        //digitalWrite (22, LOW);
+        write_pA(0, 0);
+       // digitalWrite (30, LOW);
+        write_pC(7,0);
 
     }
+
+/*
+  	// put your main code here, to run repeatedly:
+  	//digitalWrite(dir1,LOW);
+  	write_pb(2, 0);
+  	//digitalWrite(dir2,HIGH);
+  	write_pl(0,1);
+ 	// digitalWrite(speedPin, HIGH);
+  	write_pb(0, 1);
+  	//analogWrite(speedPin, 255);
+  	delay (5000);
+  	//analogWrite (speedPin, mSpeed);
+  	//digitalWrite (speedPin, LOW);
+  	write_pb (0, 0);
+  	delay (5000);
+*/
 
 //Stepper motor stuff 
 
@@ -467,6 +467,7 @@ void write_pg(unsigned char pin_num, unsigned char state)
 }
 
 
+
 void stepperDirection()
 {
 
@@ -478,8 +479,8 @@ void stepperDirection()
   buttonRight = digitalRead(39);
   buttonMiddle = digitalRead(41);
 
-  //if pin 43 is high
-  if (*pin_l & 0b01000000)//buttonLeft == HIGH
+//if pin 43 is high
+if (*pin_l & 0b01000000)//buttonLeft == HIGH )//*pin_l & 0b01000000 )//buttonLeft == HIGH )
   {
     Serial.println("Turning left...");
     //turn left 
@@ -487,10 +488,10 @@ void stepperDirection()
     myStepper.step(-stepsPerRevolution);
   }
 
-  // if pin 39 is high
-  if (*pin_g & 0b00000100)
+// if pin 39 is high
+if (*pin_g & 0b00000100)
   {
-    //do absolutely nothing
+   //do absolutely nothing
   }
   else //if pin 39 is low 
   {
@@ -502,48 +503,23 @@ void stepperDirection()
  // if pin 41 is high
  if(*pin_g & 0b00000001)
   {
-    buttonCounter ++;
-  // Display the time and date on the serial monitor
+   //fan continues being on 
   }
-
-  //fan continues being on 
-  else //DISABLED STATE 
+  else 
   {
-    buttonCounter ++;
-    lcd.noDisplay();
-                             
     mSpeed = 0; //Speed fan is zero, fan is off. 
     //digitalWrite(53, LOW);//turn off the fan 
     write_pb(0, 0);//turn off the fan 
     isFanOn = false; 
-
-    write_pA(2, 1); //yellow LED on , rest off 
-
-    //digitalWrite(30, HIGH);
-    write_pC(7,0);
-
-    //digitalWrite (22, LOW);
-    write_pA(0, 0);
-
-    write_pb(0, 0);
-
-   
-    //Print date & time if middle button is pressed 
-    DateTime now = rtc.now();
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.print(now.day(), DEC);
-    Serial.print(' ');
-    Serial.print(now.hour(), DEC);
-    Serial.print(':');
-    Serial.print(now.minute(), DEC);
-    Serial.print(':');
-    Serial.print(now.second(), DEC);
-    Serial.println();
-
   }
 
+
+}
+
+void leds()
+{
+  //22 -> BLue LED
+  //23-> Yellow LED 
+  //24 -> Green LED
 
 }
